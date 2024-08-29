@@ -3,11 +3,12 @@ import dotenv from 'dotenv';
 import User from '../models/user.js';
 import { checkAuth } from '../middlewares/auth.js';
 import { fileURLToPath } from "url";
-import { dirname } from "path";
+import path from "path";
 import mqtt from 'mqtt';
 import { publishMessage, subscribeToTopic } from '../db/mqtt.js';
 
-const __dirname = dirname(fileURLToPath(import.meta.url));
+
+const __dirname = path.dirname(fileURLToPath(import.meta.url));
 
 // import sendMail from '../utils/mail.js';
 
@@ -24,7 +25,8 @@ router.route('/relay')
             return res.status(404).json({ message: 'User not found' });
         }
         // return res.json(user.settings);
-        res.sendFile('C:/Users/parth/Desktop/blackSwan/main/public/relay.html');
+        const filePath = path.join(__dirname, '../public/relay.html');
+        res.sendFile(filePath);
     })
     .post(checkAuth, async (req, res) => {
         if (!req.user) {

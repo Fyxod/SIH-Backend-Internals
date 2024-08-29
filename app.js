@@ -2,7 +2,7 @@ import express from "express"
 import cors from "cors"
 import cookieParser from "cookie-parser"
 import { fileURLToPath } from "url";
-import { dirname } from "path";
+import path from "path";
 import authRouter from "./routes/auth.js"
 import relayRouter from "./routes/relay.js"
 import connectMongo from "./db/mongoose.js"
@@ -10,7 +10,7 @@ import mqtt from "mqtt"
 import dotenv from "dotenv"
 
 dotenv.config();
-const __dirname = dirname(fileURLToPath(import.meta.url));
+// const __dirname = dirname(fileURLToPath(import.meta.url));
 
 const PORT = process.env.PORT || 3000;
 connectMongo();

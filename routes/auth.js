@@ -6,9 +6,9 @@ import { setUser } from '../utils/jwtfuncs.js';
 import { checkAuth } from '../middlewares/auth.js';
 import { loginSchema, registerSchema } from '../utils/zodSchemas.js';
 import { fileURLToPath } from "url";
-import { dirname } from "path";
+import path from "path";
 import { connectMqtt } from '../db/mqtt.js';
-const __dirname = dirname(fileURLToPath(import.meta.url));
+const __dirname = path.dirname(fileURLToPath(import.meta.url));
 
 // import sendMail from '../utils/mail.js';
 
@@ -17,7 +17,7 @@ const router = express.Router();
 
 router.route('/register')
     .get((req, res) => {
-        res.sendFile('C:/Users/parth/Desktop/blackSwan/main/public/register.html');
+        res.sendFile('/public/register.html');
     })
     .post(async (req, res) => {
         try {
@@ -40,7 +40,8 @@ router.route('/login')
         if (req.user) {
             return res.redirect('/relay');
         }
-        res.sendFile('C:/Users/parth/Desktop/blackSwan/main/public/login.html');
+        const filePath = path.join(__dirname, '../public/relay.html');
+        res.sendFile(filePath);
     })
     .post(async (req, res) => {
         try {
