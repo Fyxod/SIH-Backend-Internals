@@ -17,7 +17,8 @@ const router = express.Router();
 
 router.route('/register')
     .get((req, res) => {
-        res.sendFile('/public/register.html');
+        const filePath = path.join(__dirname, '../public/register.html');
+        res.sendFile(filePath);
     })
     .post(async (req, res) => {
         try {
@@ -40,7 +41,7 @@ router.route('/login')
         if (req.user) {
             return res.redirect('/relay');
         }
-        const filePath = path.join(__dirname, '../public/relay.html');
+        const filePath = path.join(__dirname, '../public/login.html');
         res.sendFile(filePath);
     })
     .post(async (req, res) => {
