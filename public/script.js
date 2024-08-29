@@ -20,7 +20,7 @@ const updateRelays = async () => {
 input1.addEventListener('change', async () => {
     try{
         let res = await axios.put('http://localhost:4141/relay', {
-            relay: 1,
+            relay: 0,
             value: input1.checked,
         });
         res = res.data;
@@ -40,7 +40,7 @@ input1.addEventListener('change', async () => {
 input2.addEventListener('change', async () => {
     try{
         let res = await axios.put('http://localhost:4141/relay', {
-            relay: 2,
+            relay: 1,
             value: input2.checked,
         });
         res = res.data;
@@ -61,7 +61,7 @@ input2.addEventListener('change', async () => {
 input3.addEventListener('change', async () => {
     try{
         let res = await axios.put('http://localhost:4141/relay', {
-            relay: 3,
+            relay: 2,
             value: input3.checked,
         });
         res = res.data;
@@ -81,7 +81,7 @@ input3.addEventListener('change', async () => {
 input4.addEventListener('change', async () => {
     try{
         let res = await axios.put('http://localhost:4141/relay', {
-            relay: 4,
+            relay: 3,
             value: input4.checked,
         });
         res = res.data;

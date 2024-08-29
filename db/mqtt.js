@@ -4,7 +4,8 @@ import dotenv from "dotenv";
 import connectMongo from "./mongoose.js";
 dotenv.config();
 
-const mqttHost = process.env.MQTT_HOST || "localhost";
+const mqttHost = 'mqtt.vidhu.co'
+// const mqttHost = process.env.MQTT_HOST || "localhost";
 const protocol = "mqtt";
 const mqttport = 1883;
 // let client = null;
@@ -61,17 +62,39 @@ export const publishJson = async (topic, json, _id) => {
     });
 }
 
-export const subscribeToTopic = (topic) => {
-    // const client = mqtt.connect(hostURL, options);
-    client.subscribe(topic, (err) => {
-        if (err) {
-            console.error('MQTT subscribe error:', err);
+export const subscribeToTopic = async (topic, _id) => {
+    return new Promise(async (resolve, reject) => {
+        try {
+            const client = await connectMqtt(_id);
+
+            client.subscribe(topic, (err) => {
+                if (err) {
+                    console.error('MQTT subscribe error:', err);
+                    return reject(err);
+                }
+            });
+
+            const timeout = setTimeout(() => {
+                console.log('Timeout: No message received within 5 seconds.');
+                resolve(null);
+                client.end(); // see whether to close the connection or not
+            }, 5000);
+
+            client.on('message', (receivedTopic, message) => {
+                if (receivedTopic === topic) {
+                    clearTimeout(timeout);
+                    console.log(`Received message on topic ${topic}: ${message}`);
+                    resolve(message.toString());
+                    client.end(); // should i?
+                }
+            });
+        } catch (error) {
+            reject(error);
         }
     });
-    client.on('message', (topic, message) => {
-        console.log(`Received message on topic ${topic}: ${message}`);
-    });
-};
+}
+
+
 
 // export const unsubscribeFromTopic = (topic) => {
 //     const client = mqtt.connect(hostURL, options);
