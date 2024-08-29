@@ -1,8 +1,12 @@
 import jwt from 'jsonwebtoken';
+import dotenv from "dotenv";
+
+dotenv.config();
+
 
 export function setUser(data) {
     try {
-        return jwt.sign(data, process.env.JWT_SECRET || 'notaverygoodsecret', { expiresIn: '3h' });
+        return jwt.sign(data, process.env.JWT_SECRET || 'notaverygoodsecret', { expiresIn: '4h' });
     } catch (err) {
         console.error('Token signing for user failed:', err);
         return null;
