@@ -5,7 +5,7 @@ const input4 = document.getElementById('relay4');
 
 const updateRelays = async () => {
     try {
-        let res = await axios.post('http://localhost:4141/relay');
+        let res = await axios.post('https://sih.mlsc.tech/relay');
         res = res.data;
         console.log(res);
         input1.checked = res.relay1;
@@ -19,7 +19,7 @@ const updateRelays = async () => {
 
 input1.addEventListener('change', async () => {
     try{
-        let res = await axios.put('http://localhost:4141/relay', {
+        let res = await axios.put('https://sih.mlsc.tech/relay', {
             relay: 0,
             value: input1.checked,
         });
@@ -39,7 +39,7 @@ input1.addEventListener('change', async () => {
 
 input2.addEventListener('change', async () => {
     try{
-        let res = await axios.put('http://localhost:4141/relay', {
+        let res = await axios.put('https://sih.mlsc.tech/relay', {
             relay: 1,
             value: input2.checked,
         });
@@ -60,7 +60,7 @@ input2.addEventListener('change', async () => {
 
 input3.addEventListener('change', async () => {
     try{
-        let res = await axios.put('http://localhost:4141/relay', {
+        let res = await axios.put('https://sih.mlsc.tech/relay', {
             relay: 2,
             value: input3.checked,
         });
@@ -80,7 +80,7 @@ input3.addEventListener('change', async () => {
 
 input4.addEventListener('change', async () => {
     try{
-        let res = await axios.put('http://localhost:4141/relay', {
+        let res = await axios.put('https://sih.mlsc.tech/relay', {
             relay: 3,
             value: input4.checked,
         });
