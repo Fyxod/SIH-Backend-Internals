@@ -8,7 +8,7 @@ export async function checkAuth(req, res, next) {
     return next();
   }
 
-  const user = await getUser(token);
+  const user = getUser(token);
   if (!user) {
     res.clearCookie('token');
   }

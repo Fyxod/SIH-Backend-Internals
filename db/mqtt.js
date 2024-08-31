@@ -1,6 +1,7 @@
 import mqtt from "mqtt";
 import User from "../models/user.js";
 import dotenv from "dotenv";
+import { io } from "../app.js";
 import connectMongo from "./mongoose.js";
 dotenv.config();
 
@@ -28,15 +29,15 @@ export const connectMqtt = async (_id) => {
     client.on('connect', () => {
         console.log(`Connected to MQTT broker with id: ${_id} and email: ${user.email}`);
     })
-    .on('error', (err) => {
-        console.error('MQTT error:', err);
-    })
-    .on('reconnect', () => {
-        console.log('Reconnecting to MQTT broker');
-    })
-    .on('close', () => {
-        console.log('Connection to MQTT broker closed');
-    });
+        .on('error', (err) => {
+            console.error('MQTT error:', err);
+        })
+        .on('reconnect', () => {
+            console.log('Reconnecting to MQTT broker');
+        })
+        .on('close', () => {
+            console.log('Connection to MQTT broker closed');
+        });
     return client;
 };
 
@@ -62,7 +63,7 @@ export const publishJson = async (topic, json, _id) => {
     });
 }
 
-export const subscribeToTopic = async (topic, _id) => {
+export const subscribeToTopicTimed = async (topic, _id) => {
     return new Promise(async (resolve, reject) => {
         try {
             const client = await connectMqtt(_id);
@@ -92,6 +93,28 @@ export const subscribeToTopic = async (topic, _id) => {
             reject(error);
         }
     });
+}
+
+export const subscribeToTopic = async (topic, _id) => {
+    try {
+        const client = await connectMqtt(_id);
+
+        client.subscribe(topic, (err) => {
+            if (err) {
+                console.error('MQTT subscribe error:', err);
+                return reject(err);
+            }
+        });
+
+        client.on('message', (receivedTopic, message) => {
+            if (receivedTopic === topic) {
+                console.log(`Received message on topic ${topic}: ${message}`);
+                io.emit('sensors', message.toString());
+            }
+        });
+    } catch (error) {
+        console.log(error);
+    }
 }
 
 

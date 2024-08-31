@@ -11,24 +11,44 @@ const userSchema = new mongoose.Schema({
         required: true,
     },
     settings: {
-        relay1: {
-            type: Boolean,
-            default: false,
+        node1: {
+            relay1: {
+                type: Boolean,
+                default: false,
+            },
+            relay2: {
+                type: Boolean,
+                default: false,
+            },
+            relay3: {
+                type: Boolean,
+                default: false,
+            },
+            relay4: {
+                type: Boolean,
+                default: false,
+            },
         },
-        relay2: {
-            type: Boolean,
-            default: false,
-        },
-        relay3: {
-            type: Boolean,
-            default: false,
-        },
-        relay4: {
-            type: Boolean,
-            default: false,
-        },
-    },
-});
+        node2: {
+            relay1: {
+                type: Boolean,
+                default: false,
+            },
+            relay2: {
+                type: Boolean,
+                default: false,
+            },
+            relay3: {
+                type: Boolean,
+                default: false,
+            },
+            relay4: {
+                type: Boolean,
+                default: false,
+            },
+        }
+    }
+    });
 
 const User = mongoose.model('User', userSchema);
 

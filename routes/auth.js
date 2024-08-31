@@ -25,14 +25,23 @@ router.route('/register')
             const { email, password } = registerSchema.parse(req.body);
             const user = await User.findOne({ email });
             if (user) {
-                return res.status(400).json({ message: 'User already exists' });
+                return res.status(400).json({
+                    status: 'error',
+                    message: 'User already exists'
+                });
             }
             const hash = await bcrypt.hash(password, 12);
             const newUser = new User({ email, password: hash });
             await newUser.save();
-            return res.json({ message: 'User created' });
+            return res.status(201).json({
+                status: 'success',
+                message: 'User registered successfully'
+            })
         } catch (error) {
-            return res.status(400).json({ message: error.errors });
+            return res.status(400).json({
+                status: 'error',
+                message: error.errors
+            })
         }
     });
 
@@ -49,24 +58,39 @@ router.route('/login')
             const { email, password } = loginSchema.parse(req.body);
             const user = await User.findOne({ email });
             if (!user) {
-                return res.status(400).json({ message: 'Invalid credentials' });
+                return res.status(400).json({
+                    status: 'error',
+                    message: 'Invalid credentials'
+                });
             }
             const validPassword = await bcrypt.compare(password, user.password);
             if (!validPassword) {
-                return res.status(400).json({ message: 'Invalid credentials' });
+                return res.status(400).json({
+                    status: 'error',
+                    message: 'Invalid credentials'
+                });
             }
             const token = setUser({ _id: user._id });
             res.cookie('token', token, { httpOnly: true, secure: (process.env.NODE_ENV || 'dev') === 'prod' });
             connectMqtt(user._id);
-            return res.json({ message: 'Login successful' });
+            return res.status(200).json({
+                status: 'success',
+                message: 'Logged in successfully',
+                data:{
+                    token
+                }
+            });
         } catch (error) {
-            return res.status(400).json({ message: error.errors });
+            return res.status(400).json({
+                status: 'error',
+                message: error.errors
+            });
         }
     });
 
-router.get('/logout', checkAuth, (req, res) => {
-    res.clearCookie('token');
-    return res.json({ message: 'Logged out' });
-});
+// router.get('/logout', checkAuth, (req, res) => {
+//     res.clearCookie('token');
+//     return res.json({ message: 'Logged out' });
+// });
 
 export default router;
