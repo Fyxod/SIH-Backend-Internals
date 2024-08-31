@@ -61,6 +61,7 @@ export const publishJson = async (topic, json, _id) => {
             console.error('MQTT publish error:', err);
         }
     });
+    client.end();
 }
 
 export const subscribeToTopicTimed = async (topic, _id) => {

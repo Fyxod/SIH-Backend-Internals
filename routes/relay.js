@@ -4,7 +4,7 @@ import User from '../models/user.js';
 import { checkAuth } from '../middlewares/auth.js';
 import { fileURLToPath } from "url";
 import path from "path";
-import { publishMessage, subscribeToTopic } from '../db/mqtt.js';
+import { publishMessage, subscribeToTopic, subscribeToTopicTimed } from '../db/mqtt.js';
 
 
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
@@ -76,20 +76,29 @@ router.route('/relay')
         user.settings[`node${req.body.field}`][`relay${req.body.relay}`] = req.body.value;
         let publishData = {};
 
-        console.log("length", Object.keys(user.settings[`node${req.body.field}`]).filter(key => key !== '1').length)
-        console.log(user.settings[`node${req.body.field}`])
         for (let i = 0; i < Object.keys(user.settings[`node${req.body.field}`]).filter(key => key !== '1').length; i++) {
             publishData[`relay${i + 1}`] = user.settings[`node${req.body.field}`][`relay${i + 1}`] == true ? 'ON' : 'OFF';
         }
         publishData = JSON.stringify(publishData);
         // console.log(publishData);
-        // await publishMessage("topic/relay", publishData, user._id);
-        // const subscribeData = await subscribeToTopicTimed("topic/relay", user._id);
-        console.log(publishData);
+        if(req.body.field == 1) {
+        await publishMessage("node1/relay", publishData, user._id);
+        }
+        if(req.body.field == 2) {
+            await publishMessage("node2/relay", publishData, user._id);
+        }
+        let subscribeData = null;
+        if(req.body.field == 1) {
+         subscribeData = await subscribeToTopicTimed("node1/relay_state", user._id);
+        }
+        if(req.body.field == 2) {
+            subscribeData = await subscribeToTopicTimed("node2/relay_state", user._id);
+        }
         // if(data == 'OK') {
         //     await user.save();
         //     return res.json({ message: 'ok' });
         // }
+        const data = JSON.parse(subscribeData.toString());
         if (!data) {
             return res.status(500).json({
                 status: 'error',
@@ -97,6 +106,7 @@ router.route('/relay')
                 message: 'No response from device'
             });
         }
+        console.log(data);
         return res.status(200).json({
             status: 'success',
             message: 'Relay updated',

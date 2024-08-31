@@ -72,7 +72,7 @@ router.route('/login')
             }
             const token = setUser({ _id: user._id });
             res.cookie('token', token, { httpOnly: true, secure: (process.env.NODE_ENV || 'dev') === 'prod' });
-            connectMqtt(user._id);
+            // connectMqtt(user._id);
             return res.status(200).json({
                 status: 'success',
                 message: 'Logged in successfully',
