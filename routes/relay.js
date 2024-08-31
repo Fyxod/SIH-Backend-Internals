@@ -106,8 +106,8 @@ router.route('/relay')
         });
     });
 
-// router.post('/relay/sensor', async (req, res) => {
+router.post('/relay/sensor', async (req, res) => {
     const user = await User.findOne();
     subscribeToTopic("topic/sensors", user._id);
-// })
+});
 export default router;

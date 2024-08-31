@@ -34,6 +34,6 @@ app.use(express.urlencoded({ extended: true }));
 app.use(authRouter);
 app.use(relayRouter);
 
-app.listen(PORT, () => {
+server.listen(PORT, () => {
     console.log(`Server running on http://localhost:${PORT}`);
 });
