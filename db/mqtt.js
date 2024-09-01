@@ -114,6 +114,7 @@ export const subscribeToTopic = async (topic, _id) => {
                     let data = JSON.parse(message.toString());
                     data.value = 100-(100*(data.value/1024))
                     message = JSON.stringify(data)
+                    console.log(message)
                 }
                 io.emit(receivedTopic, message.toString());
             }
