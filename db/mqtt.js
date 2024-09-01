@@ -110,7 +110,7 @@ export const subscribeToTopic = async (topic, _id) => {
         client.on('message', (receivedTopic, message) => {
             if (receivedTopic === topic) {
                 console.log(`Received message on topic ${topic}: ${message}`);
-                io.emit('sensor', message.toString());
+                io.emit(receivedTopic, message.toString());
             }
         });
     } catch (error) {

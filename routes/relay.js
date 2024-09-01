@@ -147,6 +147,7 @@ router.route('/relay')
 
 router.post('/relay/sensor', async (req, res) => {
     const user = await User.findOne();
-    subscribeToTopic("topic/sensors", user._id);
+    subscribeToTopic("node1/sensor", user._id);
+    subscribeToTopic("node2/sensor", user._id);
 });
 export default router;
