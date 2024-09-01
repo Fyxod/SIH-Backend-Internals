@@ -62,6 +62,13 @@ router.route('/relay')
         // if (!req.user) {
         //     return res.status(401).json({ message: 'Unauthorized' });
         // }
+        if(!req.body.field || !req.body.relay || !req.body.value) {
+            return res.status(400).json({
+                status: 'error',
+                errorCode: 'FIELD_REQUIRED',
+                message: 'Field, relay and value are required'
+            });
+        }
         const user = await User.findOne();
         if (!user) {
             return res.status(404).json({
