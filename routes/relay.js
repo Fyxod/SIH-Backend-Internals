@@ -4,7 +4,7 @@ import User from '../models/user.js';
 import { checkAuth } from '../middlewares/auth.js';
 import { fileURLToPath } from "url";
 import path from "path";
-import { publishMessage, subscribeToTopic, subscribeToTopicTimed } from '../db/mqtt.js';
+import { publishMessage, subscribeToTopic,  } from '../db/mqtt.js';
 
 
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
@@ -81,32 +81,34 @@ router.route('/relay')
         }
         publishData = JSON.stringify(publishData);
         // console.log(publishData);
+        let subscribeData = null;
         if(req.body.field == 1) {
+            console.log("i am sending to 1")
         await publishMessage("node1/relay", publishData, user._id);
         }
         if(req.body.field == 2) {
-            await publishMessage("node2/relay", publishData, user._id);
+             await publishMessage("node2/relay", publishData, user._id);
         }
-        let subscribeData = null;
-        if(req.body.field == 1) {
-         subscribeData = await subscribeToTopicTimed("node1/relay_state", user._id);
-        }
-        if(req.body.field == 2) {
-            subscribeData = await subscribeToTopicTimed("node2/relay_state", user._id);
-        }
+        // if(req.body.field == 1) {
+        //  subscribeData = await subscribeToTopicTimed("node1/relay_state", user._id);
+        // }
+        // if(req.body.field == 2) {
+        //     subscribeData = await subscribeToTopicTimed("node2/relay_state", user._id);
+        // }
         // if(data == 'OK') {
         //     await user.save();
         //     return res.json({ message: 'ok' });
         // }
-        const data = JSON.parse(subscribeData.toString());
-        if (!data) {
-            return res.status(500).json({
-                status: 'error',
-                errorCode: 'INTERNAL_SERVER_ERROR',
-                message: 'No response from device'
-            });
-        }
-        console.log(data);
+        await user.save();
+        // const data = JSON.parse(subscribeData.toString());
+        // if (!data) {
+        //     return res.status(500).json({
+        //         status: 'error',
+        //         errorCode: 'INTERNAL_SERVER_ERROR',
+        //         message: 'No response from device'
+        //     });
+        // }
+        // console.log(data);
         return res.status(200).json({
             status: 'success',
             message: 'Relay updated',
@@ -115,6 +117,30 @@ router.route('/relay')
             }
         });
     });
+
+    router.route('/relay/all')
+    .put(async (req, res) => {
+        console.log(req.body);
+        const user = await User.findOne();
+        if (!user) {
+            return res.status(404).json({
+                status: 'error',
+                errorCode: 'USER_NOT_FOUND',
+                message: 'User not found'
+            })
+        }
+        let publishData = {};
+
+        for (let i = 0; i < Object.keys(user.settings[`node1`]).filter(key => key !== '1').length; i++) {
+            console.log(i)
+            publishData[`relay${i + 1}`] = req.body.value == true ? 'ON': 'OFF';
+        }
+        publishData = JSON.stringify(publishData);
+        console.log(publishData);
+        await publishMessage("node1/relay", publishData, user._id);
+        await publishMessage("node2/relay", publishData, user._id);
+        }
+    )
 
 router.post('/relay/sensor', async (req, res) => {
     const user = await User.findOne();

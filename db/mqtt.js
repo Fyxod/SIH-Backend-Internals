@@ -13,7 +13,7 @@ const mqttport = 1883;
 
 export const connectMqtt = async (_id) => {
     const hostURL = `${protocol}://${mqttHost}:${mqttport}`;
-
+console.log("i ma inside cinnect")
     const options = {
         keepalive: 60,
         clientId: _id,
@@ -23,11 +23,11 @@ export const connectMqtt = async (_id) => {
         reconnectPeriod: 1000,
         connectTimeout: 30 * 1000,
     }
-    const user = await User.findById(_id);
+    // const user = await User.findById(_id);
     const client = mqtt.connect(hostURL, options);
     // console.log(client);
     client.on('connect', () => {
-        console.log(`Connected to MQTT broker with id: ${_id} and email: ${user.email}`);
+        console.log(`Connected to MQTT broker with id: ${_id} and email:`);
     })
         .on('error', (err) => {
             console.error('MQTT error:', err);
@@ -43,6 +43,7 @@ export const connectMqtt = async (_id) => {
 
 export const publishMessage = async (topic, message, _id) => {
     // const client = mqtt.connect(hostURL, options);
+    console.log("i am inside publiush")
     const client = await connectMqtt(_id);
     console.log(`Publishing message on topic ${topic}: ${message}`);
     client.publish(topic, message, (err) => {
@@ -61,7 +62,6 @@ export const publishJson = async (topic, json, _id) => {
             console.error('MQTT publish error:', err);
         }
     });
-    client.end();
 }
 
 export const subscribeToTopicTimed = async (topic, _id) => {
@@ -110,7 +110,7 @@ export const subscribeToTopic = async (topic, _id) => {
         client.on('message', (receivedTopic, message) => {
             if (receivedTopic === topic) {
                 console.log(`Received message on topic ${topic}: ${message}`);
-                io.emit('sensors', message.toString());
+                io.emit('sensor', message.toString());
             }
         });
     } catch (error) {

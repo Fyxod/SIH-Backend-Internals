@@ -9,10 +9,11 @@ import authRouter from "./routes/auth.js";
 import relayRouter from "./routes/relay.js";
 import connectMongo from "./db/mongoose.js";
 import dotenv from "dotenv";
+import { connectMqtt } from "./db/mqtt.js";
 
 dotenv.config();
 // const __dirname = dirname(fileURLToPath(import.meta.url));
-
+// await connectMqtt(4554455);
 const PORT = process.env.PORT || 3000;
 connectMongo();
 
