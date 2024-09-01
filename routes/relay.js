@@ -134,9 +134,12 @@ router.route('/relay')
         for (let i = 0; i < Object.keys(user.settings[`node1`]).filter(key => key !== '1').length; i++) {
             console.log(i)
             publishData[`relay${i + 1}`] = req.body.value == true ? 'ON': 'OFF';
+            user.settings[`node1`][`relay${i + 1}`] = req.body.value;
+            user.settings[`node2`][`relay${i + 1}`] = req.body.value;
         }
         publishData = JSON.stringify(publishData);
         console.log(publishData);
+        await user.save();
         await publishMessage("node1/relay", publishData, user._id);
         await publishMessage("node2/relay", publishData, user._id);
         }
