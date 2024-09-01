@@ -4,7 +4,7 @@ import User from '../models/user.js';
 import { checkAuth } from '../middlewares/auth.js';
 import { fileURLToPath } from "url";
 import path from "path";
-import { publishMessage, subscribeToTopic,  } from '../db/mqtt.js';
+import { publishMessage, subscribeToTopic, } from '../db/mqtt.js';
 
 
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
@@ -82,12 +82,12 @@ router.route('/relay')
         publishData = JSON.stringify(publishData);
         // console.log(publishData);
         let subscribeData = null;
-        if(req.body.field == 1) {
+        if (req.body.field == 1) {
             console.log("i am sending to 1")
-        await publishMessage("node1/relay", publishData, user._id);
+            await publishMessage("node1/relay", publishData, user._id);
         }
-        if(req.body.field == 2) {
-             await publishMessage("node2/relay", publishData, user._id);
+        if (req.body.field == 2) {
+            await publishMessage("node2/relay", publishData, user._id);
         }
         // if(req.body.field == 1) {
         //  subscribeData = await subscribeToTopicTimed("node1/relay_state", user._id);
@@ -118,7 +118,7 @@ router.route('/relay')
         });
     });
 
-    router.route('/relay/all')
+router.route('/relay/all')
     .put(async (req, res) => {
         console.log(req.body);
         const user = await User.findOne();
@@ -133,7 +133,7 @@ router.route('/relay')
 
         for (let i = 0; i < Object.keys(user.settings[`node1`]).filter(key => key !== '1').length; i++) {
             console.log(i)
-            publishData[`relay${i + 1}`] = req.body.value == true ? 'ON': 'OFF';
+            publishData[`relay${i + 1}`] = req.body.value == true ? 'ON' : 'OFF';
             user.settings[`node1`][`relay${i + 1}`] = req.body.value;
             user.settings[`node2`][`relay${i + 1}`] = req.body.value;
         }
@@ -142,7 +142,7 @@ router.route('/relay')
         await user.save();
         await publishMessage("node1/relay", publishData, user._id);
         await publishMessage("node2/relay", publishData, user._id);
-        }
+    }
     )
 
 router.post('/relay/sensor', async (req, res) => {
