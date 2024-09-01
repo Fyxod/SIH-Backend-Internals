@@ -110,6 +110,11 @@ export const subscribeToTopic = async (topic, _id) => {
         client.on('message', (receivedTopic, message) => {
             if (receivedTopic === topic) {
                 console.log(`Received message on topic ${topic}: ${message}`);
+                if(topic == 'node2/sensor'){
+                    let data = JSON.parse(message.toString());
+                    data.value = 100-(100*(data.value/1024))
+                    message = JSON.stringify(data)
+                }
                 io.emit(receivedTopic, message.toString());
             }
         });
